@@ -2,7 +2,23 @@ const showdown = require('showdown')
 
 module.exports = function() {
   const select = document.querySelector( 'select' )
-  const files = [
+  
+  // Definisci tutti gli elementi dell'array files
+  const allFiles = [
+        {
+      name:'errore quadrato',
+      options:[
+        ['demo', 'e_q_demo.js'],
+        ['eseguire/stoppare codice', 'e_q_intro.js'],
+        ['oggetti/variabili', 'fractal_fun.js'],
+        ['funzioni', 'picksomesamples.js'],
+        ['il synth', 'acid.js'],
+        ['sequenze', 'moody.js'],
+        ['percussioni', 'intro.js'],
+        ['effetti', 'e_q_effects.js'],
+        ['grafica', 'e_q_graphics.js']
+      ]
+    },
     {
       name:'demos',
       options:[
@@ -77,17 +93,55 @@ module.exports = function() {
     }
   ]
 
-  for( let cat of files ) {
-    const group = document.createElement('optgroup')
-    group.setAttribute('label', cat.name )
-    for( let file of cat.options ) {
-      const opt = document.createElement('option')
-      opt.innerText = file[0]
-      opt.setAttribute( 'file', file[1] )
-      group.appendChild( opt )
-    }
-    select.appendChild( group )
+  // Inizialmente mostra solo l'elemento "errore quadrato"
+  let files = [allFiles[0]]
+  
+  // Funzione sonoPro che può essere chiamata dal browser
+  window.sonoPro = function() {
+    console.log('sonoPro() invocata! Aggiungendo tutti gli elementi...')
+    files = allFiles
+    updateSelect()
   }
+  
+  // Funzione gabberPro che abilita la visualizzazione del pulsante "gabber"
+  window.gabberPro = function() {
+    console.log('gabberPro() invocata! Abilitando pulsante gabber...')
+    const connectBtn = document.getElementById('connect')
+    if (connectBtn) {
+      connectBtn.style.display = 'inline-block'
+    }
+  }
+  
+  // Funzione gabberHide che nasconde il pulsante "gabber"
+  window.gabberHide = function() {
+    console.log('gabberHide() invocata! Nascondendo pulsante gabber...')
+    const connectBtn = document.getElementById('connect')
+    if (connectBtn) {
+      connectBtn.style.display = 'none'
+    }
+  }
+  
+  const updateSelect = function() {
+    // Svuota il select
+    select.innerHTML = ''
+    
+    // Ricostruisci il select con i file correnti
+    for( let cat of files ) {
+      const group = document.createElement('optgroup')
+      group.setAttribute('label', cat.name )
+      for( let file of cat.options ) {
+        const opt = document.createElement('option')
+        opt.innerText = file[0]
+        opt.setAttribute( 'file', file[1] )
+        group.appendChild( opt )
+      }
+      select.appendChild( group )
+    }
+  }
+  
+
+  // Inizializza il select con solo "errore quadrato"
+  updateSelect()
 
   select.onchange = function( e ) {
     loadexample( select[ select.selectedIndex ].getAttribute( 'file' ) )

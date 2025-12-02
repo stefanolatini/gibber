@@ -39,7 +39,7 @@ window.onload = function() {
   if( themename !== null ) {
     document.querySelector('#themer').src = `./resources/themes/${themename}.png`
   }else{
-    document.querySelector('#themer').src = `./resources/themes/noir.png`
+    document.querySelector('#themer').src = `./resources/themes/ninetynine.png`
   }
 
   environment.share = Share

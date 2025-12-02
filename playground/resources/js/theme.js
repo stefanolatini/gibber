@@ -10,7 +10,7 @@ const Theme = function(client) {
   this.el.type = 'text/css'
 
   this.active = {}
-  this.default = {
+/*   this.default = {
     background: '#222222',
     f_high: '#ffffff',
     f_med: '#cccccc',
@@ -20,6 +20,18 @@ const Theme = function(client) {
     b_med: '#666666',
     b_low: '#444444',
     b_inv: '#000000'
+  } */
+
+    this.default = {
+    background: '#000000',
+    f_high: '#efefef',
+    f_med: '#efefef',
+    f_low: '#676767',
+    f_inv: '#0a0a0a',
+    b_high: '#eeeeee',
+    b_med: '#ffd220',
+    b_low: '#464646',
+    b_inv: '#ff3300'
   }
 
   // Callbacks

@@ -259,10 +259,10 @@ module.exports = function( Gibber, element = '#editor', userEditable=true ) {
 
   cm.__setup = function() {
 
-    const defaultCode = `// hit alt+enter to run all code
-// or run line/selection with ctrl+enter.
-// ctrl+period to stop all sounds.
- 
+    const defaultCode = `// premi alt+enter per eseguire tutto il codice
+// oppure esegui riga/selezione con ctrl+enter.
+// ctrl+, (virgola) per stoppare tutti i suoni.
+
 Theory.tuning = 'slendro'
 Theory.mode = null
   

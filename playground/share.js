@@ -8,19 +8,35 @@ const share = {
   addUser( userInfo ) { console.log( userInfo ) },
 
   initShare( editor, username='anonymous', room='default', useSharedEditor=true ) {
-    const protocol = window.location.hostname === '127.0.0.1' ? 'ws' : 'wss'
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
     const ydoc = new Y.Doc(),
           provider = new WebsocketProvider(
             `${protocol}://${window.location.host}`,
             room,
             ydoc,
-            { connect:true }
+            { 
+              connect: true,
+              maxBackoffTime: 5000 // Limita il tempo di riconnessione a 5 secondi max
+            }
           ),
           chatData = ydoc.getArray( 'chat' + room ),
           userData = ydoc.getArray( 'user' + room ),
           scrollData = ydoc.getArray( 'scroll' + room ),
           commands = ydoc.getArray( 'commands' + room ),
           socket   = provider.ws
+
+    // Aggiungi gestione eventi WebSocket
+    provider.on('status', event => {
+      console.log('WebSocket status:', event.status) // 'connecting', 'connected', 'disconnected'
+    })
+    
+    provider.on('connection-error', error => {
+      console.error('WebSocket connection error:', error)
+    })
+    
+    provider.on('connection-close', event => {
+      console.log('WebSocket connection closed:', event)
+    })
 
     if( useSharedEditor ) {
       yText = ydoc.getText( 'codemirror' + room ),
@@ -290,6 +306,7 @@ const share = {
     const btn = document.querySelector('#connect')
     btn.innerText = 'disconnect'
     btn.onclick = ()=> {
+      console.log("⏰ Chiusura connessione...")
       provider.destroy()
     } 
     
