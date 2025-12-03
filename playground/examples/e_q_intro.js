@@ -81,3 +81,12 @@ sequenza qui sotto, quindi riesegui il codice usando
 
 hat = Hat()
 hat.trigger.seq( .5, 1/4 )
+
+Clock.bpm = 130
+
+Theory.mode = 'dorian'
+verb = Bus2().fx.add( Reverb() )
+Theory.root.seq(['c4','eb4','d4','b3'],1/2)
+
+s = PolySynth('blank', { waveform:'pwm' }).note.seq( 2, 1/2 )
+s.pulsewidth = gen( .2 + cycle(4.35) * .2 )

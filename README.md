@@ -5,7 +5,7 @@ della prima edizione di "errore_quadrato"
 
 ## Requisiti di sistema
 - [`node`](https://nodejs.org/en): **v20.19.6**
-- [`couchdb`](https://couchdb.org): **2.3.1**
+- [`couchdb`](https://couchdb.apache.org): **2.3.1**
 
 ## Playground ##
 
@@ -25,10 +25,19 @@ Potete farlo usando anche Visual Studio Code o node.js
 4. Ora puoi caricare gibber all'indirizzo http://127.0.0.1:9080
 
 
+## Sbloccare esempi ufficiali
+
+Basterà eseguire il comando `sonoPro()``
+
 ## Usare Gabber
 
 Gabber è la modalità collaborativa di Gibber per consentire a più utenti di fare livecoding insieme.
 Il principio è lo stesso delle chat di gruppo, si crea una room e un utenza, si entra e Gibber riproporrà in locale tutto quello che viene eseguito dagli utenti nella room e distribuirà agli altri utenti quello che viene eseguito in locale.
+
+### Abilitare/Disabilitare Gabber
+
+Abilitare: `gabberPro()`
+Disabilitare `gabberHide()`
 
 **NOTA: per Gabber è necessario non andare in CORS**
 Poiché la tecnologia WebSocket (usata per scambiare messaggi col server) non consente di avere server e client sullo stesso hostname, consigliamo vivamente l'uso di [`ngrok`]().

@@ -193,11 +193,13 @@ window.onload = function() {
       const constructor = Gibber.Audio.instruments[ instrumentName ]
       if( constructor.presets ) {
         // sampler.list() shows sample directories on server
-        if( instrumentName !== 'Multisampler'  && instrumentName !== 'Sampler' ) { 
+        if( instrumentName !== 'Multisampler'  && instrumentName !== 'Sampler' && constructor.presets.list ) { 
           constructor.list = constructor.presets.list.bind( constructor.presets )
         }
 
-        constructor.inspect = constructor.presets.inspect.bind( constructor.presets )
+        if( constructor.presets.inspect ) {
+          constructor.inspect = constructor.presets.inspect.bind( constructor.presets )
+        }
       }
 
       // sampler presets are defined for Multisampler
@@ -599,12 +601,75 @@ window.__use = function( lib ) {
           res()
           libs.vim = null
         })
+    }else if( lib === 'vim_local' ) {
+      if( libs.vim !== undefined ) { res(); return }
+      // needed to load codemirror plugin
+      window.CodeMirror = CodeMirror
+        const __p = window.__use( '/external/vim.min.js' ).then( ()=> {
+          CodeMirror.keyMap.playground.fallthrough = 'vim'
+          cm.setOption( 'vimMode', true )
+          cm.setOption( 'extraKeys', CodeMirror.keyMap.playground )
+          res()
+          libs.vim = null
+        })
     }else if( lib === 'hydra' ) {
       if( libs.Hydra !== undefined ) { res( libs.Hydra ); return }
 
       const hydrascript = document.createElement( 'script' )
       hydrascript.src = 'https://cdn.jsdelivr.net/npm/hydra-synth@latest/dist/hydra-synth.js'
 
+      hydrascript.onload = function() {
+        //msg( 'hydra is ready to texture', 'new module loaded' )
+        const Hydrasynth = Hydra
+        let __hydra = null
+
+        window.Hydra = function( shouldSrcGibberCanvas=false ) {
+          const w = null
+          const h = null
+          environment.useProxies = false
+          const canvas = document.createElement('canvas')
+          canvas.width = w === null ? window.innerWidth : w
+          canvas.height = h === null ? window.innerHeight : h
+          canvas.style.width = `${canvas.width}px`
+          canvas.style.height= `${canvas.height}px`
+
+          const hydra = __hydra === null ?  new Hydrasynth({ canvas, global:false, detectAudio:false }) : __hydra
+          document.getElementById('graphics').style = 'visibility:hidden'
+          canvas.setAttribute('class','graphics')
+          document.body.appendChild( canvas )
+
+          window.hydra = hydra
+          Gibber.subscribe( 'clear', ()=> hydra.hush() )
+          hydra.setResolution(canvas.width,canvas.height)
+          
+          if( Gibber.Environment ) {
+            Gibber.Graphics.addCodeBackground()
+
+            if( shouldSrcGibberCanvas ) {
+              s0.init({ 
+                src:document.querySelector('#graphics'), 
+                dynamic:true 
+              })
+            }
+          }
+
+          __hydra = hydra
+
+          setTimeout( ()=> environment.useProxies = true, 0 )
+          return hydra.synth
+        }
+        libs.Hydra = Hydra
+
+        Gibber.Audio.Ugen.OUTPUT = 0
+        res( Hydra )
+      } 
+
+      document.querySelector( 'head' ).appendChild( hydrascript )
+    }else if( lib === 'hydra_local' ) {
+      if( libs.Hydra !== undefined ) { res( libs.Hydra ); return }
+
+      const hydrascript = document.createElement( 'script' )
+      hydrascript.src = '/external/hydra-synth.js'
       hydrascript.onload = function() {
         //msg( 'hydra is ready to texture', 'new module loaded' )
         const Hydrasynth = Hydra
@@ -663,6 +728,79 @@ window.__use = function( lib ) {
 
       const p5script = document.createElement( 'script' )
       p5script.src = 'https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.js'
+
+      window.setup = function(){
+        if( Gibber.Environment ) {
+          Gibber.Graphics.addCodeBackground()
+        }
+
+        createCanvas( window.innerWidth,window.innerHeight )
+
+        // manage the draw loop ourselves so we can handle errors
+        noLoop()
+        window.__userDraw = window.draw
+        window.__broken = false
+        window.__draw = function() {
+          // if the current draw function isn't broken...
+          if( !window.__broken ) {
+            try {
+              // try to redraw
+              redraw()
+            }catch(e) {
+              // if redraw fails print error and set broken flag
+              console.log( e )
+              window.__broken = true
+            }
+          }
+
+          // if the user has created a new draw function...
+          if( window.__userDraw !== window.draw ) {
+            // store the new draw function...
+            window.__userDraw = window.draw
+            // ...and set the broken flag to false so that we 
+            // try to resume drawing.
+            window.__broken = false
+          }
+
+          window.__cancel = window.requestAnimationFrame( window.__draw )
+        }
+
+        window.__draw()
+      }
+
+      p5script.onload = function() {
+        Gibber.subscribe( 'clear', ()=> {
+          clear()
+        })
+
+        // .out() from ugens returns scalar, not function
+        Gibber.Audio.Ugen.OUTPUT = 1
+        libs.P5 = window.P5
+        
+        window.p5 = window.p5.instance
+        window.p5.hydra = function() {
+          s0.init({ 
+            src:document.querySelector('.p5Canvas'), 
+            dynamic:true 
+          })
+        }
+        res( window.P5 )
+        console.log = console.__log
+      } 
+
+      document.querySelector( 'head' ).appendChild( p5script )
+     
+    } else if( lib === 'p5_local' ) {
+      //if( libs.P5 !== undefined ) { res( libs.P5 ); return }
+
+      // mute console error messages that are related to 
+      // namespace clashes, log function is restored after
+      // p5 script has been loaded.
+      console.__log = console.log
+      console.log = function() {} 
+
+      const p5script = document.createElement( 'script' )
+      p5script.src = '/external/p5.js'
 
       window.setup = function(){
         if( Gibber.Environment ) {

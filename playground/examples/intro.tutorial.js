@@ -76,3 +76,5 @@ with the sequence below, and then re-reun the code using
 
 hat = Hat()
 hat.trigger.seq( .5, 1/4 )
+
+

@@ -13,7 +13,20 @@ require( 'dotenv' ).config()
 
 app.use( cors() )
 
+// Rotte specifiche per le risorse principali
+app.use('/external', express.static('../external'))
+app.use('/node_modules', express.static('../node_modules'))
+
+// Serve i file statici dalla directory playground
 app.use( express.static( './', { 
+  setHeaders: function(res, path) {
+    res.set("Cross-Origin-Embedder-Policy", "require-corp")
+    res.set("Cross-Origin-Opener-Policy",   "same-origin")
+  }  
+}) )
+
+// Serve i file statici dalla directory parent (per accedere a external/, node_modules/, etc.)
+app.use( express.static( '../', { 
   setHeaders: function(res, path) {
     res.set("Cross-Origin-Embedder-Policy", "require-corp")
     res.set("Cross-Origin-Opener-Policy",   "same-origin")
@@ -22,6 +35,9 @@ app.use( express.static( './', {
    
 app.use( function(req,res,next) {
   fs.readdir( __dirname + req.url, function(err,files) {
+    if (err) {
+      return next() // Se non è una directory, passa al prossimo middleware
+    }
     res.json( files )
     next() 
   })

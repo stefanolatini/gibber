@@ -41,8 +41,8 @@ module.exports = function( Marker ) {
         return
       }
       
-      
-      let   trimmedValue = value.source_.trim(), //value.trim(),
+      let   trimmedValue = value.trim(),
+      //let   trimmedValue = value.source_.trim(), //value.trim(),
             lineModY = node.loc.start.line === node.loc.end.line ? -1 : 0,
             lineModX = node.loc.start.line === node.loc.end.line ? node.loc.start.column-1 : 0
 

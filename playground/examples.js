@@ -13,9 +13,10 @@ module.exports = function() {
         ['oggetti/variabili', 'fractal_fun.js'],
         ['funzioni', 'picksomesamples.js'],
         ['il synth', 'acid.js'],
-        ['sequenze', 'moody.js'],
         ['percussioni', 'intro.js'],
+        ['sequenze', 'moody.js'],
         ['effetti', 'e_q_effects.js'],
+        ['oscillatori'  , 'e_q_oscillatori.js'],
         ['grafica', 'e_q_graphics.js']
       ]
     },
