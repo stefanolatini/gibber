@@ -9,7 +9,7 @@ module.exports = function() {
       name:'errore quadrato',
       options:[
         ['demo', 'e_q_demo.js'],
-        ['demo','e_q_teoria.js']
+        ['teoria','e_q_teoria.js'],
         ['eseguire/stoppare codice', 'e_q_intro.js'],
         ['oggetti/variabili', 'e_q_variables.js'],
         ['funzioni', 'e_q_functions.js'],
