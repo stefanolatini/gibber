@@ -108284,7 +108284,7 @@ module.exports = function() {
         ['funzioni', 'e_q_functions.js'],
         ['il synth', 'e_q_synths.js'],
         ['percussioni', 'e_q_percussions.js'],
-        ['sampler', 'e_q_sampler.js']
+        ['sampler', 'e_q_sampler.js'],
         ['sequenze', 'e_q_sequenze.js'],
         ['effetti', 'e_q_effects.js'],
         ['oscillatori'  , 'e_q_oscillatori.js'],
