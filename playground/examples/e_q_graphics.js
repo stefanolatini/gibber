@@ -1,20 +1,21 @@
-/* __--__--__--__--__--__--__--____
+/*--MD
 usare le grafiche in gibber
 
-// principalmente gibber usa marching.js per le grafiche 3D
-// ma possiamo anche usare hydra per la grafica 2D
-// basata su shader.
+principalmente gibber usa marching.js per le grafiche 3D
+ma possiamo anche usare hydra per la grafica 2D
+basata su shader.
 
-// in questo tutorial vedremo entrambe le opzioni
+in questo tutorial vedremo entrambe le opzioni
 
-** __--__--__--__--__--__--__--__*/
 
-// Marching.js è una libreria di ray-marching
-// che consente di creare facilmente geometrie
-// solide costruttive (CSG) e altri effetti volumetrici.
-// Per maggiori informazioni su marching.js, visita:
+Marching.js è una libreria di ray-marching
+che consente di creare facilmente geometrie
+solide costruttive (CSG) e altri effetti volumetrici.
+Per maggiori informazioni su marching.js, visita:
 
 https://charlieroberts.github.io/marching/playground/
+
+--*/
 
 Graphics.quality = 'low' // 'med' o 'high
 b = Box().render()
@@ -28,9 +29,9 @@ b = Box()
 s = Sphere(1.25)
 Difference( b,s ).render()
 
-/* __--__--__--__--__--__--__--____
+/*--md
 
-usare hydra in gibber
+# Hydra in Gibber
    
 hydra è un sistema fantastico per la grafica
 (principalmente) 2D, ispirato principalmente ai
@@ -47,15 +48,14 @@ farlo e alcuni trucchi per "ascoltare" gli
 strumenti musicali di gibber. Per maggiori info
 su hydra stesso, vedi il sito web di hydra.
 
-** __--__--__--__--__--__--__--__*/
-
-// per caricare hydra dobbiamo dire a gibber di
-// usare il file esterno. la funzione use()
-// restituisce una promise JavaScript che produce
-// il costruttore di hydra. Non hai davvero
-// bisogno di sapere cosa significa... esegui
-// semplicemente la seguente riga di codice per avviare hydra
-// in gibber:
+per caricare hydra dobbiamo dire a gibber di
+usare il file esterno. la funzione use()
+restituisce una promise JavaScript che produce
+il costruttore di hydra. Non hai davvero
+bisogno di sapere cosa significa... esegui
+semplicemente la seguente riga di codice per avviare hydra
+in gibber:
+--*/
 
 use( 'hydra' ).then( init => init() )
 
@@ -66,19 +66,21 @@ use( 'hydra' ).then( init => init() )
 
 osc().out()
 
-// noterai che gibber mette uno sfondo nero
-// dietro il codice in modo che rimanga
-// (almeno in parte) leggibile. potresti
-// anche voler premere la piccola freccia verso l'alto
-// nell'angolo in alto a destra, che nasconderà
-// la barra dei menu di gibber così la grafica può
-// essere visualizzata meglio.
+/*--md
+noterai che gibber mette uno sfondo nero
+dietro il codice in modo che rimanga
+(almeno in parte) leggibile. potresti
+anche voler premere la piccola freccia verso l'alto
+nell'angolo in alto a destra, che nasconderà
+la barra dei menu di gibber così la grafica può
+essere visualizzata meglio.
 
-// in hydra, qualsiasi argomento di funzione può essere
-// a sua volta una funzione, che verrà valutata una
-// volta per frame video. il seguente codice
-// creerà un numero casuale che determinerà
-// la frequenza orizzontale del nostro oscillatore:
+in hydra, qualsiasi argomento di funzione può essere
+a sua volta una funzione, che verrà valutata una
+volta per frame video. il seguente codice
+creerà un numero casuale che determinerà
+la frequenza orizzontale del nostro oscillatore:
+--*/
 
 osc( ()=> Math.random() * 50 ).out()
 

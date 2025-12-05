@@ -9,12 +9,14 @@ module.exports = function() {
       name:'errore quadrato',
       options:[
         ['demo', 'e_q_demo.js'],
+        ['demo','e_q_teoria.js']
         ['eseguire/stoppare codice', 'e_q_intro.js'],
-        ['oggetti/variabili', 'fractal_fun.js'],
-        ['funzioni', 'picksomesamples.js'],
-        ['il synth', 'acid.js'],
-        ['percussioni', 'intro.js'],
-        ['sequenze', 'moody.js'],
+        ['oggetti/variabili', 'e_q_variables.js'],
+        ['funzioni', 'e_q_functions.js'],
+        ['il synth', 'e_q_synths.js'],
+        ['percussioni', 'e_q_percussions.js'],
+        ['sampler', 'e_q_sampler.js']
+        ['sequenze', 'e_q_sequenze.js'],
         ['effetti', 'e_q_effects.js'],
         ['oscillatori'  , 'e_q_oscillatori.js'],
         ['grafica', 'e_q_graphics.js']
