@@ -50,6 +50,14 @@ let cm, cmconsole, exampleCode,
       }`
           code = Babel.transform(code, { presets: [], plugins:['jsdsp'] }).code 
 
+          // p5 cerca window.setup e window.draw, ma new Function() esegue in uno scope
+          // locale quindi "function setup(){}" non finisce su window. Riscriviamo le
+          // dichiarazioni di setup/draw come assegnazioni esplicite su window.
+          code = code.replace(
+            /\bfunction\s+(setup|draw)\s*\(/g,
+            'window.$1 = function('
+          )
+
           if( environment.networkConfig.isNetworked && shouldRunNetworkCode ) 
             environment.runCodeOverNetwork( selectedCode )
 

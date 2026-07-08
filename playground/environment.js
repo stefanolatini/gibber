@@ -119,6 +119,22 @@ window.onload = function() {
     }
 
     window.Graphics = Gibber.Graphics
+
+    Gibber.Graphics.addCodeBackground = function() {
+      const sheet = window.document.styleSheets[ window.document.styleSheets.length - 1 ]
+      sheet.insertRule( '.CodeMirror pre { background-color: rgba(0,0,0,.75) !important }', sheet.cssRules.length )
+    }
+
+    Gibber.Graphics.clearCodeBackground = function() {
+      const sheet = window.document.styleSheets[ window.document.styleSheets.length - 1 ]
+      for( let i = sheet.cssRules.length - 1; i >= 0; i-- ) {
+        if( sheet.cssRules[i].cssText && sheet.cssRules[i].cssText.includes('CodeMirror pre') ) {
+          sheet.deleteRule( i )
+          break
+        }
+      }
+    }
+
     window.Audio    = Gibber.Audio
     window.fn = Gibber.Audio.Gibberish.utilities.fn
     window._ = Gibber.Audio.Gibberish.Sequencer.DO_NOT_OUTPUT
@@ -862,6 +878,50 @@ window.__use = function( lib ) {
       } 
 
       document.querySelector( 'head' ).appendChild( p5script )
+     
+    }  else if( lib === 'hy5' ) {
+      if( libs.hy5 !== undefined ) { res( libs.hy5 ); return }
+
+      // hy5 richiede hydra-synth e p5 caricati in sequenza (ordine obbligatorio)
+      window.__use( 'hydra' ).then( () => window.__use( 'p5' ) ).then( () => {
+        // hy5 si aspetta window.hydra già istanziato; gibber wrappa Hydra come factory,
+        // quindi bisogna chiamarla esplicitamente prima di caricare hy5.js
+        if( !window.hydra ) window.Hydra()
+        // gibber usa global:false → s0/s1/src/osc ecc. non sono in window;
+        // esportiamo il synth saltando i nomi già occupati (p5: noise, width, height…)
+        Object.keys( window.hydra.synth ).forEach( k => {
+          if( !( k in window ) ) window[ k ] = window.hydra.synth[ k ]
+        })
+        const hy5script = document.createElement( 'script' )
+        hy5script.src = 'https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js'
+        hy5script.onload = function() {
+          libs.hy5 = window.hy5 || true
+          res( libs.hy5 )
+        }
+        document.querySelector( 'head' ).appendChild( hy5script )
+      })
+     
+    } else if( lib === 'hy5_local' ) {
+      if( libs.hy5 !== undefined ) { res( libs.hy5 ); return }
+
+      // hy5 richiede hydra-synth e p5 caricati in sequenza (ordine obbligatorio)
+      window.__use( 'hydra_local' ).then( () => window.__use( 'p5_local' ) ).then( () => {
+        // hy5 si aspetta window.hydra già istanziato; gibber wrappa Hydra come factory,
+        // quindi bisogna chiamarla esplicitamente prima di caricare hy5.js
+        if( !window.hydra ) window.Hydra()
+        // gibber usa global:false → s0/s1/src/osc ecc. non sono in window;
+        // esportiamo il synth saltando i nomi già occupati (p5: noise, width, height…)
+        Object.keys( window.hydra.synth ).forEach( k => {
+          if( !( k in window ) ) window[ k ] = window.hydra.synth[ k ]
+        })
+        const hy5script = document.createElement( 'script' )
+        hy5script.src = '/external/hy5.js'
+        hy5script.onload = function() {
+          libs.hy5 = window.hy5 || true
+          res( libs.hy5 )
+        }
+        document.querySelector( 'head' ).appendChild( hy5script )
+      })
      
     } else {
       const script = document.createElement( 'script' )

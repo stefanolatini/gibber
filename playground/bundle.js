@@ -42982,8 +42982,6 @@ const Graphics = {
   __storepos: null,
   __storedir: null,
   __postprocessing: [],
-  __ruleIdx: null,
-  __showCodeBackground: false,
   camera: {
     pos: {
       x: 0,
@@ -43621,21 +43619,6 @@ const Graphics = {
         set: __setter
       });
     }
-  },
-  addCodeBackground() {
-    if (Gibber.Environment) {
-      const sheet = window.document.styleSheets[window.document.styleSheets.length - 1];
-      Graphics.__ruleIdx = sheet.insertRule('.CodeMirror pre { background-color: rgba( 0,0,0,.75 ) !important; }', sheet.cssRules.length);
-      Graphics.__showCodeBackground = true;
-    }
-  },
-  clearCodeBackground() {
-    const sheet = window.document.styleSheets[window.document.styleSheets.length - 1];
-    if (sheet.cssRules.length > 0 && Graphics.__ruleIdx !== null) {
-      sheet.deleteRule(Graphics.__ruleIdx);
-      Graphics.__ruleIdx = null;
-    }
-    Graphics.__showCodeBackground = false;
   }
 };
 module.exports = Graphics;
@@ -107037,6 +107020,14 @@ let cm, cmconsole, exampleCode,
       }`
           code = Babel.transform(code, { presets: [], plugins:['jsdsp'] }).code 
 
+          // p5 cerca window.setup e window.draw, ma new Function() esegue in uno scope
+          // locale quindi "function setup(){}" non finisce su window. Riscriviamo le
+          // dichiarazioni di setup/draw come assegnazioni esplicite su window.
+          code = code.replace(
+            /\bfunction\s+(setup|draw)\s*\(/g,
+            'window.$1 = function('
+          )
+
           if( environment.networkConfig.isNetworked && shouldRunNetworkCode ) 
             environment.runCodeOverNetwork( selectedCode )
 
@@ -107552,6 +107543,19 @@ window.onload = function () {
       }
     };
     window.Graphics = Gibber.Graphics;
+    Gibber.Graphics.addCodeBackground = function () {
+      const sheet = window.document.styleSheets[window.document.styleSheets.length - 1];
+      sheet.insertRule('.CodeMirror pre { background-color: rgba(0,0,0,.75) !important }', sheet.cssRules.length);
+    };
+    Gibber.Graphics.clearCodeBackground = function () {
+      const sheet = window.document.styleSheets[window.document.styleSheets.length - 1];
+      for (let i = sheet.cssRules.length - 1; i >= 0; i--) {
+        if (sheet.cssRules[i].cssText && sheet.cssRules[i].cssText.includes('CodeMirror pre')) {
+          sheet.deleteRule(i);
+          break;
+        }
+      }
+    };
     window.Audio = Gibber.Audio;
     window.fn = Gibber.Audio.Gibberish.utilities.fn;
     window._ = Gibber.Audio.Gibberish.Sequencer.DO_NOT_OUTPUT;
@@ -108207,6 +108211,54 @@ window.__use = function (lib) {
         console.log = console.__log;
       };
       document.querySelector('head').appendChild(p5script);
+    } else if (lib === 'hy5') {
+      if (libs.hy5 !== undefined) {
+        res(libs.hy5);
+        return;
+      }
+
+      // hy5 richiede hydra-synth e p5 caricati in sequenza (ordine obbligatorio)
+      window.__use('hydra').then(() => window.__use('p5')).then(() => {
+        // hy5 si aspetta window.hydra già istanziato; gibber wrappa Hydra come factory,
+        // quindi bisogna chiamarla esplicitamente prima di caricare hy5.js
+        if (!window.hydra) window.Hydra();
+        // gibber usa global:false → s0/s1/src/osc ecc. non sono in window;
+        // esportiamo il synth saltando i nomi già occupati (p5: noise, width, height…)
+        Object.keys(window.hydra.synth).forEach(k => {
+          if (!(k in window)) window[k] = window.hydra.synth[k];
+        });
+        const hy5script = document.createElement('script');
+        hy5script.src = 'https://cdn.jsdelivr.net/gh/ffd8/hy5@main/hy5.js';
+        hy5script.onload = function () {
+          libs.hy5 = window.hy5 || true;
+          res(libs.hy5);
+        };
+        document.querySelector('head').appendChild(hy5script);
+      });
+    } else if (lib === 'hy5_local') {
+      if (libs.hy5 !== undefined) {
+        res(libs.hy5);
+        return;
+      }
+
+      // hy5 richiede hydra-synth e p5 caricati in sequenza (ordine obbligatorio)
+      window.__use('hydra_local').then(() => window.__use('p5_local')).then(() => {
+        // hy5 si aspetta window.hydra già istanziato; gibber wrappa Hydra come factory,
+        // quindi bisogna chiamarla esplicitamente prima di caricare hy5.js
+        if (!window.hydra) window.Hydra();
+        // gibber usa global:false → s0/s1/src/osc ecc. non sono in window;
+        // esportiamo il synth saltando i nomi già occupati (p5: noise, width, height…)
+        Object.keys(window.hydra.synth).forEach(k => {
+          if (!(k in window)) window[k] = window.hydra.synth[k];
+        });
+        const hy5script = document.createElement('script');
+        hy5script.src = '/external/hy5.js';
+        hy5script.onload = function () {
+          libs.hy5 = window.hy5 || true;
+          res(libs.hy5);
+        };
+        document.querySelector('head').appendChild(hy5script);
+      });
     } else {
       const script = document.createElement('script');
       script.src = lib;
@@ -108288,7 +108340,7 @@ module.exports = function() {
         ['sequenze', 'e_q_sequenze.js'],
         ['effetti', 'e_q_effects.js'],
         ['oscillatori'  , 'e_q_oscillatori.js'],
-        ['grafica', 'e_q_graphics.js']
+        ['grafica', 'e_q_graphics.js'],
       ]
     },
     {
@@ -108362,6 +108414,13 @@ module.exports = function() {
         ['multithreaded programming', 'multithreaded.js'], 
         ['temporal recursions', 'temporalrecursion.js'] 
       ]
+    },
+    {
+      name: 'hy5.js',
+      options:[
+        ['intro', 'hy5_intro.js'],
+        ['hy5', 'hy5.js'],
+       ]
     }
   ]
 

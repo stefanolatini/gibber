@@ -19,7 +19,7 @@ module.exports = function() {
         ['sequenze', 'e_q_sequenze.js'],
         ['effetti', 'e_q_effects.js'],
         ['oscillatori'  , 'e_q_oscillatori.js'],
-        ['grafica', 'e_q_graphics.js']
+        ['grafica', 'e_q_graphics.js'],
       ]
     },
     {
@@ -93,6 +93,13 @@ module.exports = function() {
         ['multithreaded programming', 'multithreaded.js'], 
         ['temporal recursions', 'temporalrecursion.js'] 
       ]
+    },
+    {
+      name: 'hy5.js',
+      options:[
+        ['intro', 'hy5_intro.js'],
+        ['hy5', 'hy5.js'],
+       ]
     }
   ]
 
