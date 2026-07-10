@@ -97,7 +97,6 @@ module.exports = function() {
     {
       name: 'hy5.js',
       options:[
-
         ['hydra','hydra_1.js'],
         ['am','am.js'],
         ['intro', 'hy5_intro.js'],
@@ -106,6 +105,7 @@ module.exports = function() {
         ['mista', 'mista.js'],
         ['bad_honko', 'bad_honko.js'],
         ['ynes', 'ynes.js'],
+        ['check_on_fusion','check.js'],
        ]
     }
   ]
