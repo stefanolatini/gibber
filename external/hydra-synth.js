@@ -3171,7 +3171,10 @@ class HydraRenderer {
     this.regl = (0, _regl.default)({
       //  profile: true,
       canvas: this.canvas,
-      pixelRatio: 1 //,
+      pixelRatio: 1,
+      attributes: {
+        preserveDrawingBuffer: true
+      } //,
       // extensions: [
       //   'oes_texture_half_float',
       //   'oes_texture_half_float_linear'

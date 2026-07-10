@@ -637,6 +637,7 @@ window.__use = function( lib ) {
       hydrascript.onload = function() {
         //msg( 'hydra is ready to texture', 'new module loaded' )
         const Hydrasynth = Hydra
+        window.HydraClass = Hydrasynth
         let __hydra = null
 
         window.Hydra = function( shouldSrcGibberCanvas=false ) {
@@ -689,6 +690,7 @@ window.__use = function( lib ) {
       hydrascript.onload = function() {
         //msg( 'hydra is ready to texture', 'new module loaded' )
         const Hydrasynth = Hydra
+        window.HydraClass = Hydrasynth
         let __hydra = null
 
         window.Hydra = function( shouldSrcGibberCanvas=false ) {
@@ -754,9 +756,25 @@ window.__use = function( lib ) {
 
         // manage the draw loop ourselves so we can handle errors
         noLoop()
+        window.__userSetup = window.setup
         window.__userDraw = window.draw
         window.__broken = false
         window.__draw = function() {
+          // if the user has overridden setup (e.g. to use WEBGL), re-run it
+          // outside the RAF callback to avoid p5 renderer conflicts
+          if( window.__userSetup !== window.setup ) {
+            window.__userSetup = window.setup
+            const pendingSetup = window.setup
+            if( window.__cancel ) cancelAnimationFrame( window.__cancel )
+            setTimeout(() => {
+              try { pendingSetup() } catch(e) { console.log(e) }
+              window.__userDraw = window.draw
+              window.__broken = false
+              window.__cancel = requestAnimationFrame( window.__draw )
+            }, 0)
+            return
+          }
+
           // if the current draw function isn't broken...
           if( !window.__broken ) {
             try {
@@ -827,9 +845,25 @@ window.__use = function( lib ) {
 
         // manage the draw loop ourselves so we can handle errors
         noLoop()
+        window.__userSetup = window.setup
         window.__userDraw = window.draw
         window.__broken = false
         window.__draw = function() {
+          // if the user has overridden setup (e.g. to use WEBGL), re-run it
+          // outside the RAF callback to avoid p5 renderer conflicts
+          if( window.__userSetup !== window.setup ) {
+            window.__userSetup = window.setup
+            const pendingSetup = window.setup
+            if( window.__cancel ) cancelAnimationFrame( window.__cancel )
+            setTimeout(() => {
+              try { pendingSetup() } catch(e) { console.log(e) }
+              window.__userDraw = window.draw
+              window.__broken = false
+              window.__cancel = requestAnimationFrame( window.__draw )
+            }, 0)
+            return
+          }
+
           // if the current draw function isn't broken...
           if( !window.__broken ) {
             try {

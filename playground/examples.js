@@ -5,7 +5,7 @@ module.exports = function() {
   
   // Definisci tutti gli elementi dell'array files
   const allFiles = [
-        {
+        /*{
       name:'errore quadrato',
       options:[
         ['demo', 'e_q_demo.js'],
@@ -93,18 +93,26 @@ module.exports = function() {
         ['multithreaded programming', 'multithreaded.js'], 
         ['temporal recursions', 'temporalrecursion.js'] 
       ]
-    },
+    },*/
     {
       name: 'hy5.js',
       options:[
+
+        ['hydra','hydra_1.js'],
+        ['am','am.js'],
         ['intro', 'hy5_intro.js'],
+        ['mrk','mrk.js'],
         ['hy5', 'hy5.js'],
+        ['mista', 'mista.js'],
+        ['bad_honko', 'bad_honko.js'],
+        ['ynes', 'ynes.js'],
        ]
     }
   ]
 
   // Inizialmente mostra solo l'elemento "errore quadrato"
-  let files = [allFiles[0]]
+  //let files = [allFiles[0]]
+  let files = allFiles
   
   // Funzione sonoPro che può essere chiamata dal browser
   window.sonoPro = function() {
